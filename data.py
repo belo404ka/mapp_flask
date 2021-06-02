@@ -8,3 +8,5 @@ c = """83.089174 54.809044,83.091513 54.808871,83.091713 54.808857,83.091945 54.
 data_a = [[float((k := i.split(" "))[1]), float(k[0])] for i in a.split(",")]
 data_b = [[float((k := i.split(" "))[1]), float(k[0])] for i in b.split(",")]
 data_c = [[float((k := i.split(" "))[1]), float(k[0])] for i in c.split(",")]
+
+
