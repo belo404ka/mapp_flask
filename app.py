@@ -10,10 +10,8 @@ import polyfill
 from geojson import Polygon
 from pandas.io.json import json_normalize
 import dash_html_components as html
-import plotly.graph_objects as go
 import dash_core_components as dcc
-import pandas as pd
-import numpy
+
 
 
 server = Flask(__name__)
@@ -23,19 +21,17 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(server=server, external_stylesheets=external_stylesheets)
 
 H3_res = 10
-lat = numpy.uint32(54.748079)
-lon = numpy.uint32(83.104486)
-z = numpy.uint32(12.79)
-# df = pd.read_csv("coordinates.csv",
-#                    dtype={"fips": str})
+lat = 54.748079
+lon = 83.104486
+z = 12.79
+
 
 
 maps = f'https://tile0.maps.2gis.com/tiles?x={lat}&y={lon}&z={z}'
 
-def get_maps():
-    r_json = requests.get(maps).json()
-    df = json_normalize(r_json)
-    return df
+r_json = requests.get(maps).json()
+df = json_normalize(r_json)
+
 
 
 def get_coordinates():
@@ -60,7 +56,9 @@ def get_polylines():
 
 
 def get_figure():
-    fig = go.Choroplethmapbox(get_maps(), geojson=get_polylines(), locations='fips', center={"lat": lat, "lon": lon}
+    fig = px.choropleth_mapbox(df, geojson=get_polylines(), locations=df.location, center={"lat": df.lat, "lon": df.lon},
+                               color='',
+                               featureidkey=df.location
                                )
     # Set templates
 
