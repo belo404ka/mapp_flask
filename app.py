@@ -29,8 +29,13 @@ z = 12.79
 
 maps = f'https://tile0.maps.2gis.com/tiles?x={lat}&y={lon}&z={z}'
 
-r_json = requests.get(maps).json()
-df = json_normalize(r_json)
+request = urllib.request.Request(maps)
+request.add_header('Content-Type','application/json')
+response = urllib.request.urlopen(request)
+
+decodedRes = response.read().decode('utf-8')
+json_object = json.load(decodedRes)
+df = json_normalize(json_object)
 
 
 
