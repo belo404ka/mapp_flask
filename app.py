@@ -40,17 +40,19 @@ def get_polylines():
     raw_data = get_coordinates()
     list_features = []
     for rd in raw_data['features']:
-        len_coor = len(rd['geometry']['coordinates'][0])
-        for i in range(len_coor):
+        len_coord = len(rd['geometry']['coordinates'][0])
+        for i in range(len_coord):
             lat = rd['geometry']['coordinates'][0][i][0]
             lng = rd['geometry']['coordinates'][0][i][1]
-            a = h3.geo_to_h3(lat, lng, 10)
-            points = Polygon([h3.h3_to_geo_boundary(a, True)])
+            cail = h3.geo_to_h3(lat, lng, 10)
+            points = Polygon([h3.h3_to_geo_boundary(cail, True)])
             feature = Feature(geometry=points,
                               id=raw_data['features'][0]['id'],
                               )
             list_features.append(feature)
     return FeatureCollection(list_features)
+
+
 
 
 
@@ -68,7 +70,6 @@ def get_polylines():
     #     polylines.append(Feature(polyline))
     # return FeatureCollection(polylines)
 
-
 def get_figure():
     fig = px.choropleth_mapbox(df, geojson=get_polylines(), locations=df.id,
                                color=df.color, mapbox_style="carto-positron",
@@ -84,11 +85,10 @@ def get_figure():
         )
     ])
 
-    fig.show()
+    return fig.show()
 
 
 
 if __name__ == '__main__':
     get_figure()
     app.run_server(debug=True, host='127.0.0.1', port=8080)
-
