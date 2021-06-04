@@ -7,10 +7,11 @@ import json
 import plotly.express as px
 import polyfill
 import pandas as pd
-from geojson import Feature, Point, FeatureCollection, Polygon
+from geojson import Feature, Point, FeatureCollection
 from pandas.io.json import json_normalize
 import dash_html_components as html
 import dash_core_components as dcc
+from shapely.geometry import Polygon
 
 
 
@@ -44,9 +45,10 @@ def get_polylines():
         for i in range(len_coord):
             lat = rd['geometry']['coordinates'][0][i][0]
             lng = rd['geometry']['coordinates'][0][i][1]
-            cail = h3.geo_to_h3(lat, lng, 10)
-            points = Polygon([h3.h3_to_geo_boundary(cail, True)])
-            feature = Feature(geometry=points,
+            ceil = h3.geo_to_h3(lat, lng, 10)
+            points = [h3.h3_to_geo_boundary(ceil, True)]
+            a = Polygon(points)
+            feature = Feature(geometry=a,
                               id=raw_data['features'][0]['id'],
                               )
             list_features.append(feature)
@@ -92,3 +94,4 @@ def get_figure():
 if __name__ == '__main__':
     get_figure()
     app.run_server(debug=True, host='127.0.0.1', port=8080)
+
