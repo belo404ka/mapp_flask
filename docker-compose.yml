@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   backend:
-    #image: test123
+    image: mapp
     build: .
     ports:
       - 8080:8080
