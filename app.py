@@ -8,7 +8,6 @@ import plotly.express as px
 import polyfill
 import pandas as pd
 from geojson import Feature, Point, FeatureCollection, Polygon
-from pandas.io.json import json_normalize
 import dash_html_components as html
 import dash_core_components as dcc
 
@@ -31,28 +30,26 @@ def get_coordinates():
         return json.load(f)
 
 
-def get_geometry(df):
+def get_geometry():
     raw_data = get_coordinates()
     list_features = []
-    h3_ceil = []
+    hexagons = []
     for rd in raw_data['features']:
-        len_coord = len(rd['geometry']['coordinates'][0])
-        for i in range(len_coord):
-            lat = rd['geometry']['coordinates'][0][i][0]
-            lng = rd['geometry']['coordinates'][0][i][1]
-            ceil = h3.geo_to_h3(lat, lng, 10)
-            h3_ceil.append(ceil)
-            points = Polygon([h3.h3_to_geo_boundary(ceil, True)])
-            feature = Feature(geometry=points,
-                              id=ceil,
+        poll = dict(type="Polygon", coordinates=rd['geometry']['coordinates'])
+        polyfill = h3.polyfill(poll, 10)
+        hexagons.extend(polyfill)
+        for hex in hexagons:
+            points = [h3.h3_to_geo_boundary(hex, True)]
+            geometry = dict(type="Polygon", coordinates=points)
+            feature = Feature(geometry=geometry,
+                              id=hex,
                               )
             list_features.append(feature)
-    df['geometry'] = pd.Series(h3_ceil)
+    df['geometry'] = pd.Series(hexagons)
     return FeatureCollection(list_features)
 
-
 def get_figure():
-    geoJson = get_geometry(df)
+    geoJson = get_geometry()
     fig = px.choropleth_mapbox(df, geojson=geoJson, locations=df.geometry,
                                color=df.color, featureidkey='id', mapbox_style="carto-positron",
                                zoom=10, center={"lat": 54.757826, "lon":  83.097113},
