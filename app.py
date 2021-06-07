@@ -31,7 +31,7 @@ def get_coordinates():
         return json.load(f)
 
 
-def get_geometry(df):
+def get_geometry():
     raw_data = get_coordinates()
     list_features = []
     h3_ceil = []
@@ -52,7 +52,7 @@ def get_geometry(df):
 
 
 def get_figure():
-    geoJson = get_geometry(df)
+    geoJson = get_geometry()
     fig = px.choropleth_mapbox(df, geojson=geoJson, locations=df.geometry,
                                color=df.color, featureidkey='id', mapbox_style="carto-positron",
                                zoom=10, center={"lat": 54.757826, "lon":  83.097113},
