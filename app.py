@@ -2,10 +2,8 @@ from flask import Flask
 import dash
 import json
 import h3
-from flask import request
 import json
 import plotly.express as px
-import polyfill
 import pandas as pd
 from geojson import Feature, Point, FeatureCollection, Polygon
 import dash_html_components as html
@@ -39,14 +37,15 @@ def get_geometry():
         polyfill = h3.polyfill(poll, 10)
         hexagons.extend(polyfill)
         for hex in hexagons:
-            points = [h3.h3_to_geo_boundary(hex, True)]
-            geometry = dict(type="Polygon", coordinates=points)
+            points = h3.h3_set_to_multi_polygon([hex], True)
+            geometry = dict(type="Polygon", coordinates=points[0])
             feature = Feature(geometry=geometry,
                               id=hex,
                               )
             list_features.append(feature)
     df['geometry'] = pd.Series(hexagons)
     return FeatureCollection(list_features)
+
 
 def get_figure():
     geoJson = get_geometry()
@@ -70,4 +69,3 @@ def get_figure():
 if __name__ == '__main__':
     get_figure()
     app.run_server(debug=True, host='0.0.0.0', port=8080)
-
