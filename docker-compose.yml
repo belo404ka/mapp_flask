@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   backend:
-    image: berdsk
+    image: berdsk_map
     build: .
     ports:
       - 8080:8080
